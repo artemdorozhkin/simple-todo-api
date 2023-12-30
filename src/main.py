@@ -1,44 +1,43 @@
-from flask import Flask, request, jsonify
+from pathlib import Path
+from flask import Flask, request
 
-from db.DBService import DBService
-from db.models.TodoModel import TodoModel
+from db.db_utils import create_connection
+from db.models.TodoModel import TodoService
 
 
 app = Flask(__name__)
+db_path = Path.joinpath(Path.cwd(), "db", "todos.db")
+db_path.parent.mkdir(parents=True, exist_ok=True)
 
-todo = TodoModel(DBService())
+todo = TodoService(create_connection(db_path=db_path))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        todos = todo.find_all()
-        return jsonify(todos)
+        return todo.find_all()
     else: 
-        return jsonify(
-            todo.create_todo(
-                title=request.form['title'],
-                details=request.form['details'],
-                checked=request.form['checked'],
-            )
+        return todo.create_todo(
+            title=request.form['title'],
+            details=request.form['details'],
+            checked=request.form['checked'],
         )
+
 
 @app.route('/todo/<int:id>', methods=['GET'])
 def get_todo(id: int):
-    return jsonify(todo.find_unique(id))
+    return todo.find_unique(id)
 
-@app.route('/todo/<int:id>', methods=['PATCH'])
+
+@app.route('/todo/<int:id>', methods=['PUT'])
 def update_todo(id: int):
-    return jsonify(
-            todo.update_todo(
-                id=id,
-                title=request.form['title'],
-                details=request.form['details'],
-                checked=request.form['checked'],
-            )
-        )
+    return todo.update_todo(
+        id=id,
+        title=request.form['title'],
+        details=request.form['details'],
+        checked=request.form['checked'],
+    )
+
 
 @app.route('/todo/<int:id>', methods=['DELETE'])
 def delete_todo(id: int):
-    return jsonify(
-            todo.delete_todo(id=id)
-        )
+    return todo.delete_todo(id=id)
