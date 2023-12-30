@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 
 from db.DBService import DBService
-from db.todos.TodoModel import TodoModel
+from db.models.TodoModel import TodoModel
 
 
 app = Flask(__name__)

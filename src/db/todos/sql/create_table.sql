@@ -1,8 +1,0 @@
-CREATE TABLE IF NOT EXISTS todos (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    details TEXT,
-    checked BOOLEAN,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
