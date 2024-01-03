@@ -34,13 +34,13 @@ class TodoService():
         return item
 
     def find_all(self):
-        data = self.cur.execute(self._readsql("select_all.sql"))
-        return self._to_dict(data.fetchall())
+        item = self.cur.execute(self._readsql("select_all.sql"))
+        return self._to_dict(item.fetchall())
 
     def find_unique(self, id: int):
         data = {'id': id}
-        data = self.cur.execute(self._readsql("select_one.sql"), data)
-        return self._to_dict(data.fetchone())
+        item = self.cur.execute(self._readsql("select_one.sql"), data)
+        return self._to_dict(item.fetchone())
 
     def _readsql(self, path: str):
         fullpath = os.path.join(self.dirname, "sql", path)
