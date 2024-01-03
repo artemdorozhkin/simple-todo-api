@@ -1,6 +1,8 @@
 from datetime import datetime
-from sqlite3 import Connection, Row
+from sqlite3 import Connection
 import os
+
+from api.services.todoservice_exceptions import IncorrectData, ItemNotExists
 
 
 class TodoService():
@@ -9,17 +11,29 @@ class TodoService():
         self.conn = connection
         self.cur = self.conn.cursor()
 
-    def create_todo(self, title: str, details: str, checked: bool):
-        data = {"title": title, "details": details, "checked": checked}
+    def create_todo(self, title: str, details: str, checked: str):
+        if not self._valide_title(title):
+            raise IncorrectData("title can't be null and must be a string")
+
+        if not checked.lower() in ('true', 'false'):
+            raise IncorrectData("checked must be bool")
+
+        data = {"title": title, "details": details, "checked": bool(checked)}
         id = self.conn.execute(self._readsql("create_one.sql"), data).lastrowid
         self.conn.commit()
         return self.find_unique(id)
 
-    def update_todo(self, id: int, title: str, details: str, checked: bool):
+    def update_todo(self, id: int, title: str, details: str, checked: str):
+        if not self._valide_title(title):
+            raise IncorrectData("title can't be null and must be a string")
+
+        if not checked.lower() in ('true', 'false'):
+            raise IncorrectData("checked must be bool")
+
         data = {
             "title": title,
             "details": details,
-            "checked": checked,
+            "checked": bool(checked),
             "updated_at": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
             "id": id
         }
@@ -29,18 +43,26 @@ class TodoService():
 
     def delete_todo(self, id: int):
         item = self.find_unique(id)
+
         data = {'id': id}
         self.cur.execute(self._readsql("delete_one.sql"), data)
+
         return item
 
     def find_all(self):
-        data = self.cur.execute(self._readsql("select_all.sql"))
-        return self._to_dict(data.fetchall())
+        item = self.cur.execute(self._readsql("select_all.sql"))
+        return self._to_dict(item.fetchall())
 
     def find_unique(self, id: int):
         data = {'id': id}
-        data = self.cur.execute(self._readsql("select_one.sql"), data)
-        return self._to_dict(data.fetchone())
+        item = self.cur.execute(
+            self._readsql("select_one.sql"), data
+        ).fetchone()
+
+        if not item:
+            raise ItemNotExists(f"todo with id {id} not found")
+
+        return self._to_dict(item)
 
     def _readsql(self, path: str):
         fullpath = os.path.join(self.dirname, "sql", path)
@@ -53,3 +75,6 @@ class TodoService():
             return dict(zip(columns, todo))
         else:
             return [dict(zip(columns, row)) for row in todo]
+
+    def _valide_title(self, title: str) -> bool:
+        return isinstance(title, str) and len(title) > 0
