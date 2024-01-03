@@ -1,5 +1,6 @@
 from pathlib import Path
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
+
 from api.db.db_utils import create_connection
 from api.services.todo import TodoService
 
@@ -15,8 +16,10 @@ todo_serice = TodoService(create_connection(db_path=db_path))
 @todo.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
+        current_app.logger.info("getting todos...")
         return todo_serice.find_all()
-    else: 
+    else:
+        current_app.logger.info("creating todos...")
         return todo_serice.create_todo(
             title=request.form['title'],
             details=request.form['details'],
@@ -26,11 +29,13 @@ def index():
 
 @todo.route('/<int:id>', methods=['GET'])
 def get_todo(id: int):
+    current_app.logger.info(f"getting todo {id}...")
     return todo_serice.find_unique(id)
 
 
 @todo.route('/<int:id>', methods=['PUT'])
 def update_todo(id: int):
+    current_app.logger.info(f"updating todo {id}...")
     return todo_serice.update_todo(
         id=id,
         title=request.form['title'],
@@ -41,4 +46,5 @@ def update_todo(id: int):
 
 @todo.route('/<int:id>', methods=['DELETE'])
 def delete_todo(id: int):
+    current_app.logger.info(f"deleting todo {id}...")
     return todo_serice.delete_todo(id=id)

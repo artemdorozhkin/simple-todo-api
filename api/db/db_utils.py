@@ -3,7 +3,9 @@ from pathlib import Path
 
 
 DEFAULT_PATH = Path.joinpath(Path(__file__).parent, "default.db")
-def create_connection(db_path = DEFAULT_PATH):
+
+
+def create_connection(db_path=DEFAULT_PATH):
     create_table = """
         CREATE TABLE IF NOT EXISTS todos (
             id INTEGER PRIMARY KEY,
