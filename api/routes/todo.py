@@ -1,5 +1,6 @@
 from pathlib import Path
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
+
 from api.db.db_utils import create_connection
 from api.services.todo import TodoService
 
@@ -16,7 +17,7 @@ todo_serice = TodoService(create_connection(db_path=db_path))
 def index():
     if request.method == 'GET':
         return todo_serice.find_all()
-    else: 
+    else:
         return todo_serice.create_todo(
             title=request.form['title'],
             details=request.form['details'],
