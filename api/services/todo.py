@@ -2,8 +2,7 @@ from datetime import datetime
 from sqlite3 import Connection
 import os
 
-from api.helpers.http.json_response import http_response
-from api.helpers.http.statuscodes import BAD_REQUEST
+from api.services.todoservice_exceptions import IncorrectData, ItemNotExists
 
 
 class TodoService():
@@ -14,10 +13,10 @@ class TodoService():
 
     def create_todo(self, title: str, details: str, checked: str):
         if not self._valide_title(title):
-            return http_response(BAD_REQUEST, "title can't be null and must be a string")
+            raise IncorrectData("title can't be null and must be a string")
 
         if not checked.lower() in ('true', 'false'):
-            return http_response(BAD_REQUEST, "checked must be bool")
+            raise IncorrectData("checked must be bool")
 
         data = {"title": title, "details": details, "checked": bool(checked)}
         id = self.conn.execute(self._readsql("create_one.sql"), data).lastrowid
@@ -26,10 +25,10 @@ class TodoService():
 
     def update_todo(self, id: int, title: str, details: str, checked: str):
         if not self._valide_title(title):
-            return http_response(BAD_REQUEST, "title can't be null and must be a string")
+            raise IncorrectData("title can't be null and must be a string")
 
         if not checked.lower() in ('true', 'false'):
-            return http_response(BAD_REQUEST, "checked must be bool")
+            raise IncorrectData("checked must be bool")
 
         data = {
             "title": title,
@@ -44,8 +43,10 @@ class TodoService():
 
     def delete_todo(self, id: int):
         item = self.find_unique(id)
+
         data = {'id': id}
         self.cur.execute(self._readsql("delete_one.sql"), data)
+
         return item
 
     def find_all(self):
@@ -59,7 +60,7 @@ class TodoService():
         ).fetchone()
 
         if not item:
-            return http_response(BAD_REQUEST, f"todo with id {id} not found")
+            raise ItemNotExists(f"todo with id {id} not found")
 
         return self._to_dict(item)
 
