@@ -1,2 +1,2 @@
-INSERT INTO users (email, password, token)
-VALUES (:email, :password, :token);
+INSERT INTO users (email, hash, token)
+VALUES (:email, :hash, :token);
