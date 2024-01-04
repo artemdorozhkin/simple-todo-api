@@ -1,7 +1,6 @@
 import sqlite3
 from pathlib import Path
 from os import listdir
-from flask import current_app
 
 from api.helpers.utils import readsql
 
@@ -19,3 +18,8 @@ def create_connection(db_path=DEFAULT_PATH):
         print(f"table {Path(queri).stem} created")
 
     return connection
+
+
+db_path = Path.joinpath(Path.cwd(), "db", "todos.db")
+db_path.parent.mkdir(parents=True, exist_ok=True)
+db = create_connection(db_path=db_path)
