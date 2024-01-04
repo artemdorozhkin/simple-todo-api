@@ -4,7 +4,7 @@ from flask import Blueprint, make_response, request, current_app
 from api.db.db_utils import create_connection
 from api.helpers.http.json_response import http_response
 from api.helpers.http.statuscodes import BAD_REQUEST, CREATED, NO_CONTENT, OK
-from api.services.todo.todo import TodoService
+from api.services.todo import TodoService
 from api.services.todo.exceptions import IncorrectData, ItemNotExists
 
 
