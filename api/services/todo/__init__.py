@@ -59,7 +59,7 @@ class TodoService():
         item = self.cur.execute(
             readsql(join(self.queries_path, "select_all.sql"))
         )
-        return to_dict(item.fetchall())
+        return to_dict(self.cur.description, item.fetchall())
 
     def findone(self, id: int):
         data = {'id': id}
@@ -70,7 +70,7 @@ class TodoService():
         if not item:
             raise ItemNotExists(f"todo with id {id} not found")
 
-        return to_dict(item)
+        return to_dict(self.cur.description, item)
 
     def _valide_title(self, title: str) -> bool:
         return isinstance(title, str) and len(title) > 0
