@@ -1,13 +1,15 @@
 from datetime import datetime
 from sqlite3 import Connection
-import os
+from os.path import dirname, join
+from api.helpers.utils import readsql, to_dict
 
-from api.services.todoservice_exceptions import IncorrectData, ItemNotExists
+from api.services.todo.exceptions import IncorrectData, ItemNotExists
 
 
 class TodoService():
     def __init__(self, connection: Connection) -> None:
-        self.dirname = os.path.dirname(__file__)
+        self.dirname = dirname(__file__)
+        self.queries_path = join(self.dirname, "sql")
         self.conn = connection
         self.cur = self.conn.cursor()
 
@@ -19,7 +21,9 @@ class TodoService():
             raise IncorrectData("checked must be bool")
 
         data = {"title": title, "details": details, "checked": bool(checked)}
-        id = self.conn.execute(self._readsql("create_one.sql"), data).lastrowid
+        id = self.conn.execute(
+            readsql(join(self.queries_path, "create_one.sql")), data
+        ).lastrowid
         self.conn.commit()
         return self.find_unique(id)
 
@@ -37,7 +41,8 @@ class TodoService():
             "updated_at": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
             "id": id
         }
-        self.cur.execute(self._readsql("update_one.sql"), data)
+        self.cur.execute(
+            readsql(join(self.queries_path, "update_one.sql")), data)
         self.conn.commit()
         return self.find_unique(id)
 
@@ -45,36 +50,27 @@ class TodoService():
         item = self.find_unique(id)
 
         data = {'id': id}
-        self.cur.execute(self._readsql("delete_one.sql"), data)
+        self.cur.execute(
+            readsql(join(self.queries_path, "delete_one.sql")), data)
 
         return item
 
     def find_all(self):
-        item = self.cur.execute(self._readsql("select_all.sql"))
-        return self._to_dict(item.fetchall())
+        item = self.cur.execute(
+            readsql(join(self.queries_path, "select_all.sql"))
+        )
+        return to_dict(item.fetchall())
 
     def find_unique(self, id: int):
         data = {'id': id}
         item = self.cur.execute(
-            self._readsql("select_one.sql"), data
+            readsql(join(self.queries_path, "select_one.sql")), data
         ).fetchone()
 
         if not item:
             raise ItemNotExists(f"todo with id {id} not found")
 
-        return self._to_dict(item)
-
-    def _readsql(self, path: str):
-        fullpath = os.path.join(self.dirname, "sql", path)
-        with open(fullpath, "r") as sql:
-            return sql.read()
-
-    def _to_dict(self, todo):
-        columns = [col[0] for col in self.cur.description]
-        if isinstance(todo, tuple):
-            return dict(zip(columns, todo))
-        else:
-            return [dict(zip(columns, row)) for row in todo]
+        return to_dict(item)
 
     def _valide_title(self, title: str) -> bool:
         return isinstance(title, str) and len(title) > 0
