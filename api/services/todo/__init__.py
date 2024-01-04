@@ -13,7 +13,7 @@ class TodoService():
         self.conn = connection
         self.cur = self.conn.cursor()
 
-    def create_todo(self, title: str, details: str, checked: str):
+    def create(self, title: str, details: str, checked: str):
         if not self._valide_title(title):
             raise IncorrectData("title can't be null and must be a string")
 
@@ -25,9 +25,9 @@ class TodoService():
             readsql(join(self.queries_path, "create_one.sql")), data
         ).lastrowid
         self.conn.commit()
-        return self.find_unique(id)
+        return self.findone(id)
 
-    def update_todo(self, id: int, title: str, details: str, checked: str):
+    def update(self, id: int, title: str, details: str, checked: str):
         if not self._valide_title(title):
             raise IncorrectData("title can't be null and must be a string")
 
@@ -44,10 +44,10 @@ class TodoService():
         self.cur.execute(
             readsql(join(self.queries_path, "update_one.sql")), data)
         self.conn.commit()
-        return self.find_unique(id)
+        return self.findone(id)
 
-    def delete_todo(self, id: int):
-        item = self.find_unique(id)
+    def delete(self, id: int):
+        item = self.findone(id)
 
         data = {'id': id}
         self.cur.execute(
@@ -55,13 +55,13 @@ class TodoService():
 
         return item
 
-    def find_all(self):
+    def findall(self):
         item = self.cur.execute(
             readsql(join(self.queries_path, "select_all.sql"))
         )
         return to_dict(item.fetchall())
 
-    def find_unique(self, id: int):
+    def findone(self, id: int):
         data = {'id': id}
         item = self.cur.execute(
             readsql(join(self.queries_path, "select_one.sql")), data
