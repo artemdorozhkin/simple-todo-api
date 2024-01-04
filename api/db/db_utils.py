@@ -1,21 +1,21 @@
 import sqlite3
 from pathlib import Path
+from os import listdir
+from flask import current_app
+
+from api.helpers.utils import readsql
 
 
-DEFAULT_PATH = Path.joinpath(Path(__file__).parent, "default.db")
+dirname = Path(__file__).parent
+DEFAULT_PATH = Path.joinpath(dirname, "default.db")
 
 
 def create_connection(db_path=DEFAULT_PATH):
-    create_table = """
-        CREATE TABLE IF NOT EXISTS todos (
-            id INTEGER PRIMARY KEY,
-            title TEXT NOT NULL,
-            details TEXT,
-            checked BOOLEAN,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
-    """
+    queries_path = Path.joinpath(dirname, "tables")
+
     connection = sqlite3.connect(db_path, check_same_thread=False)
-    connection.execute(create_table)
+    for queri in listdir(queries_path):
+        connection.execute(readsql(Path.joinpath(queries_path, queri)))
+        print(f"table {Path(queri).stem} created")
+
     return connection
