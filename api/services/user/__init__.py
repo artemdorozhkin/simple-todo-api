@@ -14,9 +14,9 @@ class User:
 
 def to_user(result):
     if isinstance(result, tuple):
-        return User(result['email'], result['hash'], result['token'])
+        return User(result[1], result[2], result[3])
     else:
-        return [User(row['email'], row['hash'], result['token']) for row in result]
+        return [User(row[1], row[2], result[3]) for row in result]
 
 
 class UserService():
@@ -27,12 +27,12 @@ class UserService():
         self.cur = self.conn.cursor()
 
     def create(self, email: str, hash: str):
-        data = {"email": email, "hash": hash}
+        data = {"email": email, "hash": hash, "token": None}
         id = self.conn.execute(
             readsql(join(self.queries_path, "create_one.sql")), data
         ).lastrowid
         self.conn.commit()
-        return self.findone(id)
+        return self.findone(email)
 
     def updatetoken(self, email: str, token: str):
         data = {
@@ -70,6 +70,6 @@ class UserService():
         ).fetchone()
 
         if not user:
-            raise UserNotFound(f"can't find user with email {email}")
+            return None
 
         return to_user(user)
