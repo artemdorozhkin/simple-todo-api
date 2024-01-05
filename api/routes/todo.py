@@ -3,7 +3,6 @@ from flask import Blueprint, make_response, request, current_app
 from api.db.db_utils import db
 from api.helpers.http.json_response import http_response
 from api.helpers.http.statuscodes import BAD_REQUEST, CREATED, NO_CONTENT, OK
-from api.routes.auth import auth
 from api.services.todo import TodoService
 from api.services.todo.exceptions import IncorrectData, ItemNotExists
 
@@ -13,7 +12,6 @@ todo_serice = TodoService(db)
 
 
 @todo.route('/', methods=['GET', 'POST'])
-@auth.login_required
 def index():
     current_app.logger.info("getting todos...")
     if request.method == 'GET':
@@ -37,7 +35,6 @@ def index():
 
 
 @todo.route('/<int:id>', methods=['GET'])
-@auth.login_required
 def get_todo(id: int):
     current_app.logger.info(f"getting todo {id}...")
     try:
@@ -49,7 +46,6 @@ def get_todo(id: int):
 
 
 @todo.route('/<int:id>', methods=['PUT'])
-@auth.login_required
 def update_todo(id: int):
     current_app.logger.info(f"updating todo {id}...")
     try:
@@ -69,7 +65,6 @@ def update_todo(id: int):
 
 
 @todo.route('/<int:id>', methods=['DELETE'])
-@auth.login_required
 def delete_todo(id: int):
     current_app.logger.info(f"deleting todo {id}...")
     try:
