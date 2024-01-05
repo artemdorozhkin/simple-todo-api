@@ -1,4 +1,5 @@
 from flask import Blueprint, make_response, request, current_app
+from flask_jwt_extended import jwt_required
 
 from api.db.db_utils import db
 from api.helpers.http.json_response import http_response
@@ -12,6 +13,7 @@ todo_serice = TodoService(db)
 
 
 @todo.route('/', methods=['GET', 'POST'])
+@jwt_required()
 def index():
     current_app.logger.info("getting todos...")
     if request.method == 'GET':
@@ -31,10 +33,11 @@ def index():
             return make_response(todoitem, CREATED)
         except IncorrectData as e:
             current_app.logger.error(e.args[0])
-            return http_response(BAD_REQUEST, e.args[0])
+            return http_response(BAD_REQUEST, {"msg": e.args[0]})
 
 
 @todo.route('/<int:id>', methods=['GET'])
+@jwt_required()
 def get_todo(id: int):
     current_app.logger.info(f"getting todo {id}...")
     try:
@@ -42,10 +45,11 @@ def get_todo(id: int):
         return make_response(item, OK)
     except ItemNotExists as e:
         current_app.logger.error(e.args[0])
-        return http_response(BAD_REQUEST, e.args[0])
+        return http_response(BAD_REQUEST, {"msg": e.args[0]})
 
 
 @todo.route('/<int:id>', methods=['PUT'])
+@jwt_required()
 def update_todo(id: int):
     current_app.logger.info(f"updating todo {id}...")
     try:
@@ -58,13 +62,14 @@ def update_todo(id: int):
         return make_response(item, OK)
     except IncorrectData as e:
         current_app.logger.error(e.args[0])
-        return http_response(BAD_REQUEST, e.args[0])
+        return http_response(BAD_REQUEST, {"msg": e.args[0]})
     except ItemNotExists as e:
         current_app.logger.error(e.args[0])
-        return http_response(BAD_REQUEST, e.args[0])
+        return http_response(BAD_REQUEST, {"msg": e.args[0]})
 
 
 @todo.route('/<int:id>', methods=['DELETE'])
+@jwt_required()
 def delete_todo(id: int):
     current_app.logger.info(f"deleting todo {id}...")
     try:
@@ -72,4 +77,4 @@ def delete_todo(id: int):
         return make_response(item, OK)
     except ItemNotExists as e:
         current_app.logger.error(e.args[0])
-        return http_response(BAD_REQUEST, e.args[0])
+        return http_response(BAD_REQUEST, {"msg": e.args[0]})
