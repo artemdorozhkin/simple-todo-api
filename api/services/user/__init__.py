@@ -6,17 +6,17 @@ from api.services.user.exceptions import UserNotFound
 
 
 class User:
-    def __init__(self, email: str, hash: str, token: str = "") -> None:
+    def __init__(self, email: str, hash: str, id: int = -1) -> None:
         self.email = email
         self.hash = hash
-        self.token = token
+        self.id = id
 
 
 def to_user(result):
     if isinstance(result, tuple):
-        return User(result[1], result[2], result[3])
+        return User(result[1], result[2], result[0])
     else:
-        return [User(row[1], row[2], result[3]) for row in result]
+        return [User(row[1], row[2], result[0]) for row in result]
 
 
 class UserService():
@@ -28,23 +28,10 @@ class UserService():
 
     def create(self, email: str, hash: str):
         data = {"email": email, "hash": hash, "token": None}
-        id = self.conn.execute(
+        self.conn.execute(
             readsql(join(self.queries_path, "create_one.sql")), data
-        ).lastrowid
+        )
         self.conn.commit()
-        return self.findone(email)
-
-    def updatetoken(self, email: str, token: str):
-        data = {
-            "token": token,
-            "updated_at": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
-            "email": email
-        }
-
-        self.cur.execute(
-            readsql(join(self.queries_path, "update_token.sql")), data)
-        self.conn.commit()
-
         return self.findone(email)
 
     def delete(self, email: str):
