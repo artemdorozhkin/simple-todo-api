@@ -28,12 +28,14 @@ def index_get():
 def index_post():
     current_app.logger.info("creating todos...")
     try:
-        todoitem = todo_serice.create(
-            title=request.form['title'],
-            details=request.form['details'] or "",
-            checked=request.form['checked'] or False,
+        json = request.form
+        item = todo_serice.create(
+            title=json['title'],
+            details=json['details'] if 'details' in json else "",
+            checked=json['checked'].lower() == 'true',
+            checked=json['checked'] if 'checked' in json else False,
         )
-        return make_response(todoitem, CREATED)
+        return make_response(item, CREATED)
     except IncorrectData as e:
         current_app.logger.error(e.args[0])
         return http_response(BAD_REQUEST, {"msg": e.args[0]})
@@ -56,11 +58,11 @@ def get_todo(id: int):
 def update_todo(id: int):
     current_app.logger.info(f"updating todo {id}...")
     try:
-        item = todo_serice.update(
-            id=id,
-            title=request.form['title'],
-            details=request.form['details'],
-            checked=request.form['checked'],
+        json = request.form
+        item = todo_serice.create(
+            title=json['title'],
+            details=json['details'] if 'details' in json else "",
+            checked=json['checked'] if 'checked' in json else False,
         )
         return make_response(item, OK)
     except IncorrectData as e:
