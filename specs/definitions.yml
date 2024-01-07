@@ -1,0 +1,23 @@
+definitions:
+  Todo:
+    type: object
+    properties:
+      checked:
+        type: boolean
+      created_at:
+        type: date
+      details:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: date
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: >-
+      Enter the token with the `Bearer ` prefix, e.g. "Bearer abcde12345".

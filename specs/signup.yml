@@ -1,0 +1,32 @@
+User registration
+---
+tags:
+  - Authentication
+deprecated: false
+parameters:
+  - name: email
+    type: string
+    in: formData
+    required: True
+
+  - name: password
+    type: string
+    in: formData
+    required: True
+responses:
+  201:
+    description: CREATED
+    examples:
+      application/json:
+        {
+          "code": 201,
+          "msg": "User with email example@email.com successfully created."
+        }
+  400:
+    description: BAD REQUEST
+    examples:
+      application/json:
+        {
+          "code": 400,
+          "msg": "An error occurred during user creation: <error description>"
+        }
