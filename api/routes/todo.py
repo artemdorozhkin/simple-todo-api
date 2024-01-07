@@ -32,7 +32,6 @@ def index_post():
         item = todo_serice.create(
             title=json['title'],
             details=json['details'] if 'details' in json else "",
-            checked=json['checked'].lower() == 'true',
             checked=json['checked'] if 'checked' in json else False,
         )
         return make_response(item, CREATED)
