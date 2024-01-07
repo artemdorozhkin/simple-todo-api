@@ -20,7 +20,8 @@ class TodoService():
         if not checked.lower() in ('true', 'false'):
             raise IncorrectData("checked must be bool")
 
-        data = {"title": title, "details": details, "checked": bool(checked)}
+        data = {"title": title, "details": details,
+                "checked": checked.lower() == 'true'}
         id = self.conn.execute(
             readsql(join(self.queries_path, "create_one.sql")), data
         ).lastrowid
@@ -37,7 +38,7 @@ class TodoService():
         data = {
             "title": title,
             "details": details,
-            "checked": bool(checked),
+            "checked": checked.lower() == 'true',
             "updated_at": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
             "id": id
         }

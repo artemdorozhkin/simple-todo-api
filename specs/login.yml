@@ -1,0 +1,24 @@
+User authentication
+---
+tags:
+  - Authentication
+deprecated: false
+parameters:
+  - name: email
+    type: string
+    in: formData
+    required: True
+
+  - name: password
+    type: string
+    in: formData
+    required: True
+responses:
+  200:
+    description: OK
+    examples:
+      application/json:
+        {
+          "code": 200,
+          "access_token": "exampleofaccesstoken1234567890"
+        }
