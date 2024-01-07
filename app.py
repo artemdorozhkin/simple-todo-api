@@ -1,18 +1,28 @@
+import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flasgger import Swagger
 from dotenv import dotenv_values
 
-from api.routes.todo import todo
-from api.routes.auth import auth
+from api.routes import routes
+
+config = dotenv_values('.env')
 
 
 def create_app() -> Flask:
-    config = dotenv_values('.env')
     app = Flask(__name__)
-    jwt = JWTManager(app)
-    app.register_blueprint(todo)
-    app.register_blueprint(auth)
-    app.config['JWT_SECRET_KEY'] = config['SECRET_KEY']
+    for route in routes:
+        app.register_blueprint(route)
+
+    JWTManager(app)
+    app.config['JWT_SECRET_KEY'] = config['JWT_SECRET_KEY']
+
+    app.config['SWAGGER'] = {
+        'title': 'TODO API DOCS',
+        'doc_dir': './specs/'
+    }
+    def_path = os.path.join(os.getcwd(), "specs", "definitions.yml")
+    Swagger(app, template_file=def_path, parse=True)
 
     return app
 
@@ -20,7 +30,7 @@ def create_app() -> Flask:
 if __name__ == "__main__":
     app = create_app()
     app.run(
-        host='localhost',
-        port=8080,
-        debug=True
+        host=config['APP_HOST'],
+        port=config['APP_PORT'],
+        debug=config['APP_DEBUG']
     )

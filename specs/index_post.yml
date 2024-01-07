@@ -1,0 +1,46 @@
+Create new todo
+---
+tags:
+  - ToDos
+security:
+  - Bearer: []
+parameters:
+  - name: title
+    type: string
+    in: formData
+    required: True
+
+  - name: details
+    type: string
+    in: formData
+    required: False
+    default: ""
+    
+  - name: checked
+    type: boolean
+    in: formData
+    required: False
+    default: False
+deprecated: false
+responses:
+  201:
+    description: CREATED
+    schema:
+      $ref: '#/definitions/Todo'
+    examples:
+      application/json:
+        {
+          "checked": 1,
+          "created_at": "1970-01-01 00:00:00",
+          "details": "Todo details 1",
+          "id": 0,
+          "title": "Todo title 1",
+          "updated_at": "1970-01-01 00:00:00"
+        }
+  401:
+    description: UNAUTHORIZED
+    examples:
+      application/json:
+        {
+          "msg": "Missing Authorization Header"
+        }

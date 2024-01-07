@@ -43,7 +43,7 @@ def signup():
 
         return http_response(
             CREATED,
-            {"msg": "User successfully created"},
+            {"msg": f"User with email {email} successfully created."},
         )
     except Exception as e:
         return http_response(
