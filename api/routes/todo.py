@@ -15,8 +15,12 @@ todo_serice = TodoService(db)
 @todo.route('/', methods=['GET'])
 @jwt_required()
 def index_get():
+    query = request.args
+    order_by = query.get('order_by') or ''
+    order_direct = query.get('order_direct') or ''
+
     current_app.logger.info("getting todos...")
-    items = todo_serice.findall()
+    items = todo_serice.findall(order_by, order_direct)
     if len(items) == 0:
         return make_response(items, NO_CONTENT)
     else:
