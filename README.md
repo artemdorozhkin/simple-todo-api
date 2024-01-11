@@ -2,6 +2,8 @@
 
 [original task](TODO_API.md)
 
+edit .env file
+
 ```bash
 git clone https://github.com/artemdorozhkin/lesson-01-simple-todo-api.git
 ```
