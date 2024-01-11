@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlite3 import Connection
 from os.path import dirname, join
 
-from api.helpers.utils import readsql, to_dict
+from api.helpers.utils import paginate, readsql, to_dict
 
 from api.services.todo.exceptions import IncorrectData, ItemNotExists
 
@@ -62,7 +62,7 @@ class TodoService():
 
         return item
 
-    def findall(self, order_by: str, order_direct: str):
+    def findall(self, order_by: str, order_direct: str, on_page: int = None):
         if not order_direct.lower() in ['', 'asc', 'desc']:
             order_direct = 'asc'
         args = ' '.join([order_by, order_direct]).strip()
@@ -70,7 +70,9 @@ class TodoService():
         query = f'{query.replace(";", "")} ORDER BY {args};' if args else query
 
         item = self.cur.execute(query)
-        return to_dict(self.cur.description, item.fetchall())
+        items = to_dict(self.cur.description, item.fetchall())
+
+        return paginate(items, on_page)
 
     def findone(self, id: int):
         data = {'id': id}
