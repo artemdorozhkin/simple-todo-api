@@ -44,9 +44,19 @@ def save_file(files, folder):
     return filename
 
 
-def paginate(items: list, on_page: int):
-    if not on_page or len(items) <= on_page:
-        return {"1": items}
+def paginate(items: list, on_page: str):
+    default = {
+        "1": items,
+        "count": 1
+    }
+    try:
+        on_page = int(on_page)
+        if len(items) <= on_page:
+            return default
+    except TypeError:
+        return default
+    except ValueError:
+        return default
 
     buffer = {}
     subbufer = []
@@ -58,4 +68,5 @@ def paginate(items: list, on_page: int):
             subbufer = []
             page = page + 1
 
+    buffer['count'] = page - 1
     return buffer
