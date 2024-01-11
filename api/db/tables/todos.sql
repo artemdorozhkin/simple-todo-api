@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS todos (
     title TEXT NOT NULL,
     details TEXT,
     checked BOOLEAN,
+    file_path TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
