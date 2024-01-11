@@ -62,7 +62,7 @@ class TodoService():
 
         return item
 
-    def findall(self, order_by: str, order_direct: str, on_page: int = None):
+    def findall(self, order_by: str, order_direct: str, on_page: str = None):
         if not order_direct.lower() in ['', 'asc', 'desc']:
             order_direct = 'asc'
         args = ' '.join([order_by, order_direct]).strip()
