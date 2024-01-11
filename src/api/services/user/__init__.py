@@ -27,7 +27,7 @@ class UserService():
         self.cur = self.conn.cursor()
 
     def create(self, email: str, hash: str):
-        data = {"email": email, "hash": hash, "token": None}
+        data = {"email": email, "hash": hash}
         self.conn.execute(
             readsql(join(self.queries_path, "create_one.sql")), data
         )

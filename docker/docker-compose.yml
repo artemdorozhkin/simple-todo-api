@@ -1,0 +1,12 @@
+version: '2.8'
+
+services:
+  api:
+    container_name: todo-api
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - 80:${APP_PORT}
+    env_file:
+      - ../.env
