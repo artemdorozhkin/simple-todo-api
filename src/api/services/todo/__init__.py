@@ -14,22 +14,7 @@ class TodoService():
         self.conn = connection
         self.cur = self.conn.cursor()
 
-    def create(self, title: str, details: str, checked: str):
-        if not self._valide_title(title):
-            raise IncorrectData("title can't be null and must be a string")
-
-        if not checked.lower() in ('true', 'false'):
-            raise IncorrectData("checked must be bool")
-
-        data = {"title": title, "details": details,
-                "checked": checked.lower() == 'true'}
-        id = self.conn.execute(
-            readsql(join(self.queries_path, "create_one.sql")), data
-        ).lastrowid
-        self.conn.commit()
-        return self.findone(id)
-
-    def update(self, id: int, title: str, details: str, checked: str):
+    def create(self, title: str, details: str, checked: str, file_path: str):
         if not self._valide_title(title):
             raise IncorrectData("title can't be null and must be a string")
 
@@ -40,6 +25,26 @@ class TodoService():
             "title": title,
             "details": details,
             "checked": checked.lower() == 'true',
+            'file_path': file_path
+        }
+        id = self.conn.execute(
+            readsql(join(self.queries_path, "create_one.sql")), data
+        ).lastrowid
+        self.conn.commit()
+        return self.findone(id)
+
+    def update(self, id: int, title: str, details: str, checked: str, file_path: str):
+        if not self._valide_title(title):
+            raise IncorrectData("title can't be null and must be a string")
+
+        if not checked.lower() in ('true', 'false'):
+            raise IncorrectData("checked must be bool")
+
+        data = {
+            "title": title,
+            "details": details,
+            "checked": checked.lower() == 'true',
+            "file_path": file_path,
             "updated_at": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
             "id": id
         }
