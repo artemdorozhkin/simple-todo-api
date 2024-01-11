@@ -42,3 +42,20 @@ def save_file(files, folder):
             )
             file.save(file_path)
     return filename
+
+
+def paginate(items: list, on_page: int):
+    if not on_page or len(items) <= on_page:
+        return {"1": items}
+
+    buffer = {}
+    subbufer = []
+    page = 1
+    for item in items:
+        subbufer.append(item)
+        if len(subbufer) == on_page:
+            buffer[str(page)] = subbufer
+            subbufer = []
+            page = page + 1
+
+    return buffer
