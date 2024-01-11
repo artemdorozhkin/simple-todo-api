@@ -1,2 +1,2 @@
-INSERT INTO todos (title, details, checked)
-VALUES (:title, :details, :checked);
+INSERT INTO todos (title, details, checked, file_path)
+VALUES (:title, :details, :checked, :file_path);
