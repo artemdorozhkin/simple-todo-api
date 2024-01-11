@@ -26,6 +26,12 @@ parameters:
     in: formData
     required: False
     default: False
+
+  - name: file_path
+    type: string
+    in: formData
+    required: False
+    default: ""
 deprecated: false
 responses:
   200:
@@ -39,6 +45,7 @@ responses:
           "created_at": "1970-01-01 00:00:00",
           "details": "Todo details 1",
           "id": 0,
+          "file_path": null,
           "title": "Todo title 1",
           "updated_at": "1970-01-01 00:00:00"
         }
