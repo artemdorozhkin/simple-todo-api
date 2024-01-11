@@ -23,9 +23,10 @@ def index_get():
     query = request.args
     order_by = query.get('order_by') or ''
     order_direct = query.get('order_direct') or ''
+    on_page = query.get('on_page') or None
 
     current_app.logger.info("getting todos...")
-    items = todo_serice.findall(order_by, order_direct)
+    items = todo_serice.findall(order_by, order_direct, on_page)
     if len(items) == 0:
         return make_response(items, NO_CONTENT)
     else:

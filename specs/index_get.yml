@@ -4,6 +4,24 @@ tags:
   - ToDos
 security:
   - Bearer: []
+parameters:
+  - name: order_by
+    type: string
+    in: path
+    required: false
+    default: ''
+    
+  - name: order_direct
+    type: string
+    in: path
+    required: false
+    default: ''
+    
+  - name: on_page
+    type: integer
+    in: path
+    required: false
+    default: 0
 deprecated: false
 responses:
   200:
@@ -11,24 +29,28 @@ responses:
     schema:
       $ref: '#/definitions/Todo'
     examples:
-      application/json: [
-        {
-          "checked": 1,
-          "created_at": "1970-01-01 00:00:00",
-          "details": "Todo details 1",
-          "id": 0,
-          "title": "Todo title 1",
-          "updated_at": "1970-01-01 00:00:00"
-        },
-        {
-          "checked": 0,
-          "created_at": "1970-01-01 00:00:00",
-          "details": "Todo details 2",
-          "id": 1,
-          "title": "Todo title 2",
-          "updated_at": "1970-01-01 00:00:00"
+      application/json: 
+        { 
+          "1": [
+            {
+              "checked": 1,
+              "created_at": "1970-01-01 00:00:00",
+              "details": "Todo details 1",
+              "id": 0,
+              "title": "Todo title 1",
+              "updated_at": "1970-01-01 00:00:00"
+            },
+            {
+              "checked": 0,
+              "created_at": "1970-01-01 00:00:00",
+              "details": "Todo details 2",
+              "id": 1,
+              "title": "Todo title 2",
+              "updated_at": "1970-01-01 00:00:00"
+            }
+          ],
+          "count": 1
         }
-      ]
   204:
     description: NO CONTENT
   401:

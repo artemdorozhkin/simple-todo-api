@@ -12,6 +12,8 @@ definitions:
         type: integer
       title:
         type: string
+      file_path:
+        type: string
       updated_at:
         type: date
 securityDefinitions:
