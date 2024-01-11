@@ -14,6 +14,10 @@ def create_app() -> Flask:
     for route in routes:
         app.register_blueprint(route)
 
+    app.config['UPLOAD_FOLDER'] = os.path.join(
+        os.getcwd(), "public", "uploads"
+    )
+
     JWTManager(app)
     app.config['JWT_SECRET_KEY'] = config['JWT_SECRET_KEY']
 
