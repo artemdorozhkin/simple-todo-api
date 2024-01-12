@@ -16,16 +16,14 @@ def create_connection(db_path=DEFAULT_PATH):
     connection = sqlite3.connect(db_path, check_same_thread=False)
     for queri in listdir(queries_path):
         connection.execute(readsql(Path.joinpath(queries_path, queri)))
-        print(f"table {Path(queri).stem} created")
 
     for migration in listdir(migrations_path):
         try:
             connection.execute(
-                readsql(Path.joinpath(migrations_path, migration)))
-            print(f"migrations {Path(migration).stem} executed")
+                readsql(Path.joinpath(migrations_path, migration))
+            )
         except Exception as e:
-            print(
-                f"migrations {Path(migration).stem} passed because: {e.args[0]}")
+            pass
 
     return connection
 

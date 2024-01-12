@@ -33,8 +33,17 @@ def create_app() -> Flask:
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(
-        host=config['APP_HOST'],
-        port=config['APP_PORT'],
-        debug=config['APP_DEBUG']
-    )
+    if config['PRODUCTION'].lower() == "true":
+        print("server running in production mode")
+        from waitress import serve
+        serve(
+            app,
+            host=config['APP_HOST'],
+            port=config['APP_PORT']
+        )
+    else:
+        app.run(
+            host=config['APP_HOST'],
+            port=config['APP_PORT'],
+            debug=config['APP_DEBUG']
+        )
